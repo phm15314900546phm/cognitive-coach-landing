@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>认知觉醒践行教练 · 把书里的方法论，变成今天就能动手做的一件事</title>
+<meta name="description" content="认知觉醒践行教练——一个不迎合、只追问、给出 15 分钟最小动作的 AI 教练。它记得你上次说过什么，跨会话不让你重复解释自己。">
+<style>
+  :root {
+    --bg: #f5f5f5;
+    --surface: #fafafa;
+    --ink: #1f1d1a;
+    --ink-2: #5c5852;
+    --ink-3: #8a857c;
+    --line: #e6e2da;
+    --line-soft: #efebe3;
+    --accent: #b98866;
+    --accent-deep: #8e6246;
+    --shadow: 0 1px 2px rgba(31, 29, 26, 0.04), 0 8px 24px rgba(31, 29, 26, 0.05);
+    --font-serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", Georgia, "Times New Roman", serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- 顶部细栏 ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(245, 245, 245, 0.85);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .topbar-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+  }
+  .brand-mark {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--ink);
+    display: inline-block;
+    position: relative;
+  }
+  .brand-mark::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: var(--accent);
+  }
+  .nav-links {
+    display: flex;
+    gap: 22px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    font-size: 14px;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 6px 14px;
+    transition: all 0.2s ease;
+  }
+  .nav-cta:hover { background: var(--ink); color: var(--bg); }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+  }
+
+  /* ---------- 通用区块 ---------- */
+  section { padding: 96px 24px; }
+  .container { max-width: 1120px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    color: var(--ink);
+    margin: 0 0 16px;
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  h1 { font-size: clamp(36px, 6vw, 60px); letter-spacing: -0.01em; }
+  h2 { font-size: clamp(28px, 4vw, 40px); }
+  h3 { font-size: 20px; }
+  p { margin: 0 0 16px; color: var(--ink-2); }
+  .lead { font-size: 18px; color: var(--ink); line-height: 1.6; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 120px 24px 96px; }
+  .hero-inner { max-width: 880px; }
+  .hero h1 { margin-bottom: 24px; }
+  .hero h1 .accent { color: var(--accent); }
+  .hero .lead { max-width: 640px; margin-bottom: 36px; }
+  .hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 14px 24px;
+    font-size: 15px;
+    font-family: var(--font-sans);
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .btn-primary .arrow { font-size: 16px; transform: translateY(-1px); }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink-2);
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+  }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink); }
+  .hero-meta {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    gap: 36px;
+    flex-wrap: wrap;
+    color: var(--ink-3);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+  .hero-meta strong { color: var(--ink); font-weight: 600; margin-right: 6px; }
+
+  /* ---------- 痛点 ---------- */
+  .pain { background: var(--surface); border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 48px;
+    border-top: 1px solid var(--line);
+  }
+  .pain-item {
+    padding: 36px 28px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .pain-item:last-child { border-right: 0; }
+  .pain-num {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 18px;
+  }
+  .pain-item h3 {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--ink);
+    margin: 0 0 10px;
+    line-height: 1.4;
+  }
+  .pain-item p { font-size: 14px; margin: 0; color: var(--ink-2); }
+  @media (max-width: 720px) {
+    .pain-grid { grid-template-columns: 1fr; }
+    .pain-item { border-right: 0; }
+  }
+
+  /* ---------- 怎么帮你 ---------- */
+  .help-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 48px;
+  }
+  .help-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 32px 28px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .help-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .help-tag {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--accent-deep);
+    background: rgba(185, 136, 102, 0.08);
+    padding: 4px 10px;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+  .help-card h3 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .help-card p { font-size: 14.5px; line-height: 1.7; margin: 0; }
+  @media (max-width: 880px) {
+    .help-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- 怎么用 ---------- */
+  .how { background: var(--ink); color: var(--bg); border: 0; }
+  .how h2, .how h3, .how p { color: var(--bg); }
+  .how .eyebrow { color: var(--accent); }
+  .how .lead { color: rgba(245, 245, 245, 0.78); }
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 56px;
+    border-top: 1px solid rgba(245, 245, 245, 0.15);
+  }
+  .how-step {
+    padding: 36px 28px;
+    border-right: 1px solid rgba(245, 245, 245, 0.15);
+    border-bottom: 1px solid rgba(245, 245, 245, 0.15);
+  }
+  .how-step:last-child { border-right: 0; }
+  .how-step .step-num {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+  .how-step h3 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--bg);
+    margin-bottom: 12px;
+  }
+  .how-step p { font-size: 14.5px; line-height: 1.7; color: rgba(245, 245, 245, 0.7); margin: 0; }
+  @media (max-width: 720px) {
+    .how-steps { grid-template-columns: 1fr; }
+    .how-step { border-right: 0; }
+  }
+
+  /* ---------- CTA ---------- */
+  .cta { text-align: center; padding: 120px 24px; }
+  .cta-inner { max-width: 720px; margin: 0 auto; }
+  .cta h2 { margin-bottom: 18px; }
+  .cta .lead { margin-bottom: 36px; }
+  .cta-meta {
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- 即将推出 ---------- */
+  .coming {
+    background: var(--surface);
+    border-top: 1px solid var(--line-soft);
+  }
+  .coming-card {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--bg);
+    border: 1px dashed var(--line);
+    padding: 36px 32px;
+    text-align: left;
+  }
+  .coming-card .label {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--accent-deep);
+    background: rgba(185, 136, 102, 0.1);
+    padding: 4px 10px;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+  .coming-card h3 {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    margin-bottom: 14px;
+  }
+  .coming-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .coming-card li {
+    padding: 10px 0;
+    color: var(--ink-2);
+    font-size: 15px;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    gap: 12px;
+  }
+  .coming-card li:last-child { border-bottom: 0; }
+  .coming-card li::before {
+    content: "·";
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 36px 24px;
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 13px;
+    border-top: 1px solid var(--line-soft);
+  }
+  footer a { color: var(--ink-2); border-bottom: 1px dotted var(--line); }
+  footer a:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* ---------- 打印样式 ---------- */
+  @media print {
+    body { background: white; color: black; }
+    .topbar, .cta, footer { display: none; }
+    section { padding: 24px 0; }
+    .how { background: white; color: black; }
+    .how h2, .how h3, .how p { color: black; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>认知觉醒践行教练</span>
+    </div>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#pain">痛点</a>
+      <a href="#help">能力</a>
+      <a href="#how">怎么用</a>
+      <a href="#coming">即将推出</a>
+    </nav>
+    <a class="nav-cta" href="https://s73s7cqcw8.coze.site" target="_blank" rel="noopener noreferrer">免费试用</a>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow">一个不迎合的 AI 教练</span>
+      <h1>读完书，为什么<span class="accent">还是没动？</span></h1>
+      <p class="lead">认知觉醒践行教练 · 把你划线的金句，变成今天 15 分钟内就能动手做的一件事。</p>
+      <div class="hero-cta-row">
+        <a class="btn-primary" href="https://s73s7cqcw8.coze.site" target="_blank" rel="noopener noreferrer">
+          立即免费试用 10 次对话 <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="btn-ghost" href="#how">看怎么用</a>
+      </div>
+      <div class="hero-meta">
+        <span><strong>不迎合</strong>只追问</span>
+        <span><strong>15 分钟</strong>最小动作</span>
+        <span><strong>跨会话</strong>长期记忆</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="pain" class="pain">
+    <div class="container">
+      <span class="eyebrow">如果你也这样</span>
+      <h2>道理都懂，<br>就是动不起来。</h2>
+      <div class="pain-grid">
+        <article class="pain-item">
+          <div class="pain-num">01</div>
+          <h3>读了一堆书，<br>还是不改变</h3>
+          <p>笔记越攒越厚，回到生活还是原来的样子。知道和做到之间，隔着一道墙。</p>
+        </article>
+        <article class="pain-item">
+          <div class="pain-num">02</div>
+          <h3>每次都重新<br>解释自己卡在哪</h3>
+          <p>换一个 AI 就要从头说一遍。说多了连自己都烦，最后干脆不说了。</p>
+        </article>
+        <article class="pain-item">
+          <div class="pain-num">03</div>
+          <h3>一思考就内耗，<br>一行动就拖延</h3>
+          <p>想得很远很远，最后一天什么都没做。然后怪自己，又开始下一轮内耗。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="help">
+    <div class="container">
+      <span class="eyebrow">它能帮你做什么</span>
+      <h2>三件事，<br>不多不少。</h2>
+      <div class="help-grid">
+        <article class="help-card">
+          <span class="help-tag">追问</span>
+          <h3>锋利的追问</h3>
+          <p>不讲鸡汤，不灌"加油"。只问你最该面对的那一个问题，问到你不能逃。</p>
+        </article>
+        <article class="help-card">
+          <span class="help-tag">动作</span>
+          <h3>15 分钟的最小动作</h3>
+          <p>不要"改变自己"这种空话。给你一个今天 15 分钟内能做完的物理动作，立刻改变现状。</p>
+        </article>
+        <article class="help-card">
+          <span class="help-tag">记忆</span>
+          <h3>跨会话长期记忆</h3>
+          <p>它记得你上次说过什么、卡在哪、不想面对什么。下次回来不用重复解释，直接接上。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="how">
+    <div class="container">
+      <span class="eyebrow">怎么用</span>
+      <h2>三步，<br>从一句话到一件事。</h2>
+      <p class="lead">不需要铺垫，不需要寒暄。直接开始。</p>
+      <div class="how-steps">
+        <article class="how-step">
+          <div class="step-num">第 1 步</div>
+          <h3>发一句金句</h3>
+          <p>发一句你在书里划的、觉得"说的就是我"的那句话。再加一句你最近最想解决的一件事。</p>
+        </article>
+        <article class="how-step">
+          <div class="step-num">第 2 步</div>
+          <h3>接住一个追问</h3>
+          <p>它会反问你最关键的 1 个问题。不绕弯子，不哄你，让你看见自己一直在躲的那个点。</p>
+        </article>
+        <article class="how-step">
+          <div class="step-num">第 3 步</div>
+          <h3>拿走一个动作</h3>
+          <p>它会给你一个今天 15 分钟内能做的最小动作。做完反馈回来，下一次接着追问下一个。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="cta-inner">
+      <span class="eyebrow">先试一次</span>
+      <h2>免费 10 次对话，<br>够你试出它值不值得继续用。</h2>
+      <p class="lead">不需要注册、不需要绑卡。点进去直接开始。</p>
+      <a class="btn-primary" href="https://s73s7cqcw8.coze.site" target="_blank" rel="noopener noreferrer">
+        立即免费试用 10 次对话 <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <div class="cta-meta">付费版（含完整跨会话记忆）即将推出 · 现在可先免费体验</div>
+    </div>
+  </section>
+
+  <section id="coming" class="coming">
+    <div class="container">
+      <span class="eyebrow">即将推出</span>
+      <h2>付费订阅版，<br>想做的事清单。</h2>
+      <div class="coming-card">
+        <span class="label">下一版</span>
+        <h3>你提的，它都记得。</h3>
+        <ul>
+          <li>完整跨会话长期记忆（不限次数）</li>
+          <li>每周一次行动复盘（看你是真做了还是只说要做）</li>
+          <li>金句收藏 + 回顾（你划过的，每周末提醒你一次）</li>
+          <li>自定义最小动作类型（学习 / 工作 / 关系 / 身体）</li>
+          <li>导出你的对话历史（自己的话自己留着）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 认知觉醒践行教练 · 一个不迎合的 AI 教练</p>
+  <p style="margin-top: 8px;">由 <a href="https://www.coze.cn" target="_blank" rel="noopener noreferrer">扣子</a> 构建</p>
+</footer>
+
+<script>
+  // 页内片段导航：拦截点击，确保始终在当前文档内
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href').slice(1);
+      if (!id) return;
+      var target = document.getElementById(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
