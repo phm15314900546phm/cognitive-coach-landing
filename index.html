@@ -644,6 +644,9 @@
 
       <div id="coze-web-sdk-container" class="coze-chat-container" style="display:none;"></div>
       <p class="chat-tip" id="chat-tip" style="display:none;">首次加载约 2-3 秒；如果点"发送"没反应，刷新一下页面。</p>
+      <div id="force-clear-wrap" style="display:none; text-align:center; margin-top:12px;">
+        <button id="force-clear-pat" class="btn-text" style="font-size:13px; color:#e74c3c; text-decoration:underline;">对话区域显示"无权限访问"？点此清除本地 token，重新粘贴</button>
+      </div>
     </div>
   </section>
 
@@ -666,6 +669,8 @@
     var tokenPanel = document.getElementById('token-input-panel');
     var chatContainer = document.getElementById('coze-web-sdk-container');
     var chatTip = document.getElementById('chat-tip');
+    var forceClearWrap = document.getElementById('force-clear-wrap');
+    var forceClearBtn = document.getElementById('force-clear-pat');
 
     function getPat() {
       try { return localStorage.getItem(STORAGE_KEY) || ''; } catch (e) { return ''; }
@@ -685,6 +690,7 @@
       if (tokenPanel) tokenPanel.style.display = 'none';
       if (chatContainer) chatContainer.style.display = 'block';
       if (chatTip) chatTip.style.display = 'block';
+      if (forceClearWrap) forceClearWrap.style.display = 'block';
     }
     function showInputUI(msg) {
       if (tokenPanel) tokenPanel.style.display = 'block';
@@ -693,6 +699,7 @@
         chatContainer.innerHTML = '';
       }
       if (chatTip) chatTip.style.display = 'none';
+      if (forceClearWrap) forceClearWrap.style.display = 'none';
       if (patClear) patClear.style.display = 'block';
       if (msg) showError(msg);
     }
@@ -733,7 +740,7 @@
         container: chatContainer,
         theme: 'light',
         style: { width: '100%', height: '600px', borderRadius: '8px' },
-        unauthorizedDescription: '鉴权失败：Token 无效或权限不足。\n\n请检查 PAT 是否包含 4 个权限：\n  • run(VibeProject)\n  • getMetadata(VibeProject)\n  • uploadFileToStorage(VibeProject)\n  • convertFileType',
+        unauthorizedDescription: '鉴权失败：Token 无效或权限不足。\n\n解决方法：点击对话区域下方的红色链接「点此清除本地 token」，刷新页面后重新粘贴。\n\n请确认 PAT 勾选了 4 个权限：\n  • run(VibeProject)\n  • getMetadata(VibeProject)\n  • uploadFileToStorage(VibeProject)\n  • convertFileType',
         onTokenInvalid: function () {
           clearPat();
           showInputUI('Token 被服务器拒绝（无效或权限不足）。请检查 PAT 权限后重新粘贴。');
@@ -751,6 +758,11 @@
     }
 
     if (patSubmit) patSubmit.addEventListener('click', submitPat);
+    if (forceClearBtn) forceClearBtn.addEventListener('click', function () {
+      if (!confirm('确认清除本机保存的 token？清除后页面会刷新，你需要重新粘贴 PAT。')) return;
+      clearPat();
+      location.reload();
+    });
     if (patClear) patClear.addEventListener('click', resetPat);
     if (patInput) {
       patInput.addEventListener('keydown', function (e) {
