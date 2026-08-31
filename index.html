@@ -547,6 +547,15 @@
 <script>
   // 初始化 Coze WebSDK
   (function () {
+    // 在 chat 容器内显示错误信息（覆盖默认的"无权限访问"）
+    function showCozeError(title, detail) {
+      var el = document.getElementById('coze-web-sdk-container');
+      if (!el) return;
+      el.innerHTML = '<div style="padding:24px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-family:inherit;">' +
+        '<div style="font-size:16px;font-weight:600;margin-bottom:8px;">⚠️ ' + title + '</div>' +
+        '<div style="font-size:14px;line-height:1.6;white-space:pre-wrap;">' + detail + '</div>' +
+        '</div>';
+    }
     function initCozeSDK() {
       if (typeof cozeWebSDK === 'undefined') {
         setTimeout(initCozeSDK, 100);
@@ -555,11 +564,21 @@
       cozeWebSDK.init({
         projectId: '7678257485416824882',
         refreshToken: function () {
-          return Promise.resolve("pat_OE81tk8MLXUdZp3e0RtOUCUTR1G47DW8F1noNYsnTD1UajhWofb6qo5i8yf5p4VU");
+          return Promise.resolve("pat_cBKw26mHzEZa1FFhh31RYW2hPu0QXiRDyDX8uDnxRZYkIxurd8VSrUSpngWe9KNh");
         },
         container: document.getElementById('coze-web-sdk-container'),
         theme: 'light',
-        style: { width: '100%', height: '600px', borderRadius: '8px' }
+        style: { width: '100%', height: '600px', borderRadius: '8px' },
+        unauthorizedDescription: '鉴权失败：Token 无效或权限不足。\n\n如果看到这条提示，请联系管理员检查 PAT 是否包含以下 4 个权限：\n  • run(VibeProject)\n  • getMetadata(VibeProject)\n  • uploadFileToStorage(VibeProject)\n  • convertFileType',
+        onTokenInvalid: function () {
+          showCozeError('Token 无效或权限不足', '请检查 PAT 是否勾选了 convertFileType / run / getMetadata / uploadFileToStorage 这 4 个权限');
+        },
+        onTokenExpired: function () {
+          showCozeError('Token 已过期', '请让管理员重新生成 PAT（30 天有效）');
+        },
+        onNetworkError: function (err) {
+          showCozeError('网络错误', 'WebSDK 内部请求失败：' + JSON.stringify(err));
+        }
       });
     }
     if (document.readyState === 'loading') {
