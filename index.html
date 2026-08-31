@@ -354,6 +354,87 @@
   .chat {
     background: var(--surface);
   }
+  .token-panel {
+    max-width: 560px;
+    margin: 32px auto 0;
+  }
+  .token-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px 28px;
+    box-shadow: var(--shadow);
+  }
+  .token-icon { font-size: 32px; margin-bottom: 8px; }
+  .token-card h3 { font-size: 20px; margin: 0 0 12px; color: var(--ink); }
+  .token-desc { font-size: 14px; line-height: 1.7; color: var(--muted); margin-bottom: 24px; }
+  .token-form { display: flex; flex-direction: column; gap: 12px; }
+  .token-form label { font-size: 13px; color: var(--ink); font-weight: 600; }
+  #pat-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: #fafaf7;
+    color: var(--ink);
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  #pat-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .token-error {
+    font-size: 13px;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: none;
+    line-height: 1.5;
+  }
+  #pat-submit { width: 100%; margin-top: 4px; padding: 14px 20px; font-size: 15px; }
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 8px;
+    text-decoration: underline;
+  }
+  .btn-text:hover { color: var(--accent); }
+  .token-help { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--line); }
+  .token-help summary {
+    font-size: 13px;
+    color: var(--accent);
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+  }
+  .token-help summary:hover { color: var(--ink); }
+  .token-help ol { font-size: 13px; line-height: 1.8; color: var(--muted); padding-left: 20px; margin-top: 12px; }
+  .token-help ol li { margin-bottom: 6px; }
+  .token-help code {
+    font-size: 12px;
+    background: #fafaf7;
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+    font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+  }
+  .token-help .warn {
+    font-size: 12px;
+    color: #b45309;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
   .coze-chat-container {
     margin-top: 32px;
     min-height: 600px;
@@ -531,8 +612,38 @@
       <span class="eyebrow">直接开始</span>
       <h2>现在就和它对话，<br>不绕弯子。</h2>
       <p class="lead">不需要注册、不需要绑卡。点上方"立即免费试用"会滑到这里，直接开聊。</p>
-      <div id="coze-web-sdk-container" class="coze-chat-container"></div>
-      <p class="chat-tip">首次加载约 2-3 秒；如果点"发送"没反应，刷新一下页面。</p>
+
+      <div id="token-input-panel" class="token-panel">
+        <div class="token-card">
+          <div class="token-icon">🔑</div>
+          <h3>粘贴你的访问令牌（PAT）</h3>
+          <p class="token-desc">为了不把你的密钥暴露在公开网页里，需要你手动粘贴一次。后续存在浏览器本地，刷新不丢；除非清缓存或换浏览器，否则只用输一次。</p>
+          <div class="token-form">
+            <label for="pat-input">个人访问令牌（PAT）</label>
+            <input type="password" id="pat-input" placeholder="pat_..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+            <div class="token-error" id="pat-error"></div>
+            <button id="pat-submit" class="btn-primary">开始对话 →</button>
+            <button id="pat-clear" class="btn-text" style="display:none;">已存 token 失效？清除重输</button>
+          </div>
+          <details class="token-help">
+            <summary>不知道 PAT 是什么？怎么创建？</summary>
+            <ol>
+              <li>打开 <a href="https://www.coze.cn/open/oauth/pats" target="_blank" rel="noopener noreferrer">扣子个人访问令牌页面</a>（需要登录）</li>
+              <li>点「添加新令牌」</li>
+              <li>名称随便填（如 "my-coach"）</li>
+              <li>过期时间：30 天</li>
+              <li>权限：展开「VibeProject 管理」，把 4 个子项<strong>全部勾上</strong>（run / getMetadata / uploadFileToStorage / convertFileType）</li>
+              <li>访问工作空间：选「指定工作空间」→ 选你的工作空间</li>
+              <li>点「确定」→ 在弹出窗口点「复制」按钮</li>
+              <li>把复制的那串 <code>pat_...</code> 粘贴到上面输入框</li>
+            </ol>
+            <p class="warn">⚠️ token 只能创建时复制一次，关掉弹窗就再也看不到完整 token 了。如果忘了只能删除重建。</p>
+          </details>
+        </div>
+      </div>
+
+      <div id="coze-web-sdk-container" class="coze-chat-container" style="display:none;"></div>
+      <p class="chat-tip" id="chat-tip" style="display:none;">首次加载约 2-3 秒；如果点"发送"没反应，刷新一下页面。</p>
     </div>
   </section>
 
@@ -545,46 +656,112 @@
 
 <script src="https://lf-cdn.coze.cn/obj/unpkg/latest/coze/web-sdk/dist/js-umd/index.min.js"></script>
 <script>
-  // 初始化 Coze WebSDK
+  // 初始化 Coze WebSDK（手动 PAT 模式，token 存 localStorage）
   (function () {
-    // 在 chat 容器内显示错误信息（覆盖默认的"无权限访问"）
-    function showCozeError(title, detail) {
-      var el = document.getElementById('coze-web-sdk-container');
-      if (!el) return;
-      el.innerHTML = '<div style="padding:24px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-family:inherit;">' +
-        '<div style="font-size:16px;font-weight:600;margin-bottom:8px;">⚠️ ' + title + '</div>' +
-        '<div style="font-size:14px;line-height:1.6;white-space:pre-wrap;">' + detail + '</div>' +
-        '</div>';
+    var STORAGE_KEY = 'coze_pat';
+    var patInput = document.getElementById('pat-input');
+    var patSubmit = document.getElementById('pat-submit');
+    var patClear = document.getElementById('pat-clear');
+    var patError = document.getElementById('pat-error');
+    var tokenPanel = document.getElementById('token-input-panel');
+    var chatContainer = document.getElementById('coze-web-sdk-container');
+    var chatTip = document.getElementById('chat-tip');
+
+    function getPat() {
+      try { return localStorage.getItem(STORAGE_KEY) || ''; } catch (e) { return ''; }
     }
-    function initCozeSDK() {
+    function savePat(pat) {
+      try { localStorage.setItem(STORAGE_KEY, pat); } catch (e) {}
+    }
+    function clearPat() {
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    }
+    function showError(msg) {
+      if (!patError) return;
+      patError.textContent = msg;
+      patError.style.display = msg ? 'block' : 'none';
+    }
+    function showChatUI() {
+      if (tokenPanel) tokenPanel.style.display = 'none';
+      if (chatContainer) chatContainer.style.display = 'block';
+      if (chatTip) chatTip.style.display = 'block';
+    }
+    function showInputUI(msg) {
+      if (tokenPanel) tokenPanel.style.display = 'block';
+      if (chatContainer) {
+        chatContainer.style.display = 'none';
+        chatContainer.innerHTML = '';
+      }
+      if (chatTip) chatTip.style.display = 'none';
+      if (patClear) patClear.style.display = 'block';
+      if (msg) showError(msg);
+    }
+    function validatePat(pat) {
+      if (!pat) return '请粘贴你的 PAT';
+      if (pat.indexOf('pat_') !== 0) return 'token 格式不对，应该以 pat_ 开头';
+      if (pat.length < 30) return 'token 长度太短，请检查是否复制完整';
+      return null;
+    }
+    function submitPat() {
+      var pat = patInput.value.trim();
+      var err = validatePat(pat);
+      if (err) { showError(err); return; }
+      showError('');
+      savePat(pat);
+      initSDK();
+    }
+    function resetPat() {
+      if (!confirm('确认清除已存的 token？')) return;
+      clearPat();
+      patInput.value = '';
+      showError('');
+      if (patClear) patClear.style.display = 'none';
+      try { if (typeof cozeWebSDK !== 'undefined' && cozeWebSDK && cozeWebSDK.destroy) cozeWebSDK.destroy(); } catch (e) {}
+      showInputUI('');
+    }
+    function initSDK() {
+      var pat = getPat();
+      if (!pat) { showInputUI(''); return; }
       if (typeof cozeWebSDK === 'undefined') {
-        setTimeout(initCozeSDK, 100);
+        setTimeout(initSDK, 100);
         return;
       }
+      showChatUI();
       cozeWebSDK.init({
         projectId: '7678257485416824882',
-        refreshToken: function () {
-          return Promise.resolve("pat_cBKw26mHzEZa1FFhh31RYW2hPu0QXiRDyDX8uDnxRZYkIxurd8VSrUSpngWe9KNh");
-        },
-        container: document.getElementById('coze-web-sdk-container'),
+        refreshToken: function () { return Promise.resolve(getPat()); },
+        container: chatContainer,
         theme: 'light',
         style: { width: '100%', height: '600px', borderRadius: '8px' },
-        unauthorizedDescription: '鉴权失败：Token 无效或权限不足。\n\n如果看到这条提示，请联系管理员检查 PAT 是否包含以下 4 个权限：\n  • run(VibeProject)\n  • getMetadata(VibeProject)\n  • uploadFileToStorage(VibeProject)\n  • convertFileType',
+        unauthorizedDescription: '鉴权失败：Token 无效或权限不足。\n\n请检查 PAT 是否包含 4 个权限：\n  • run(VibeProject)\n  • getMetadata(VibeProject)\n  • uploadFileToStorage(VibeProject)\n  • convertFileType',
         onTokenInvalid: function () {
-          showCozeError('Token 无效或权限不足', '请检查 PAT 是否勾选了 convertFileType / run / getMetadata / uploadFileToStorage 这 4 个权限');
+          clearPat();
+          showInputUI('Token 被服务器拒绝（无效或权限不足）。请检查 PAT 权限后重新粘贴。');
         },
         onTokenExpired: function () {
-          showCozeError('Token 已过期', '请让管理员重新生成 PAT（30 天有效）');
+          clearPat();
+          showInputUI('Token 已过期（30 天有效期）。请重新创建 PAT 并粘贴。');
         },
         onNetworkError: function (err) {
-          showCozeError('网络错误', 'WebSDK 内部请求失败：' + JSON.stringify(err));
+          var msg = '网络错误，WebSDK 请求失败';
+          if (err && err.message) msg += '：' + err.message;
+          showInputUI(msg);
         }
       });
     }
+
+    if (patSubmit) patSubmit.addEventListener('click', submitPat);
+    if (patClear) patClear.addEventListener('click', resetPat);
+    if (patInput) {
+      patInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitPat(); }
+      });
+    }
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initCozeSDK);
+      document.addEventListener('DOMContentLoaded', initSDK);
     } else {
-      initCozeSDK();
+      initSDK();
     }
   })();
 </script>
