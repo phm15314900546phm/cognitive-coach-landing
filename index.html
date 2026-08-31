@@ -350,7 +350,31 @@
   footer a { color: var(--ink-2); border-bottom: 1px dotted var(--line); }
   footer a:hover { color: var(--ink); border-color: var(--ink); }
 
+  /* ---------- Chat / WebSDK ---------- */
+  .chat {
+    background: var(--surface);
+  }
+  .coze-chat-container {
+    margin-top: 32px;
+    min-height: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fafafa;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .chat-tip {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-3);
+    text-align: center;
+  }
+  @media (max-width: 640px) {
+    .coze-chat-container { min-height: 520px; }
+  }
+
   /* ---------- 打印样式 ---------- */
+
   @media print {
     body { background: white; color: black; }
     .topbar, .cta, footer { display: none; }
@@ -374,7 +398,7 @@
       <a href="#how">怎么用</a>
       <a href="#coming">即将推出</a>
     </nav>
-    <a class="nav-cta" href="https://s73s7cqcw8.coze.site" target="_blank" rel="noopener noreferrer">免费试用</a>
+    <a class="nav-cta" href="#chat">免费试用</a>
   </div>
 </header>
 
@@ -386,7 +410,7 @@
       <h1>读完书，为什么<span class="accent">还是没动？</span></h1>
       <p class="lead">认知觉醒践行教练 · 把你划线的金句，变成今天 15 分钟内就能动手做的一件事。</p>
       <div class="hero-cta-row">
-        <a class="btn-primary" href="https://s73s7cqcw8.coze.site" target="_blank" rel="noopener noreferrer">
+        <a class="btn-primary" href="#chat">
           立即免费试用 10 次对话 <span class="arrow" aria-hidden="true">→</span>
         </a>
         <a class="btn-ghost" href="#how">看怎么用</a>
@@ -477,7 +501,7 @@
       <span class="eyebrow">先试一次</span>
       <h2>免费 10 次对话，<br>够你试出它值不值得继续用。</h2>
       <p class="lead">不需要注册、不需要绑卡。点进去直接开始。</p>
-      <a class="btn-primary" href="https://s73s7cqcw8.coze.site" target="_blank" rel="noopener noreferrer">
+      <a class="btn-primary" href="#chat">
         立即免费试用 10 次对话 <span class="arrow" aria-hidden="true">→</span>
       </a>
       <div class="cta-meta">付费版（含完整跨会话记忆）即将推出 · 现在可先免费体验</div>
@@ -502,6 +526,16 @@
     </div>
   </section>
 
+  <section id="chat" class="chat">
+    <div class="container">
+      <span class="eyebrow">直接开始</span>
+      <h2>现在就和它对话，<br>不绕弯子。</h2>
+      <p class="lead">不需要注册、不需要绑卡。点上方"立即免费试用"会滑到这里，直接开聊。</p>
+      <div id="coze-web-sdk-container" class="coze-chat-container"></div>
+      <p class="chat-tip">首次加载约 2-3 秒；如果点"发送"没反应，刷新一下页面。</p>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -509,6 +543,32 @@
   <p style="margin-top: 8px;">由 <a href="https://www.coze.cn" target="_blank" rel="noopener noreferrer">扣子</a> 构建</p>
 </footer>
 
+<script src="https://lf-cdn.coze.cn/obj/unpkg/latest/coze/web-sdk/dist/js-umd/index.min.js"></script>
+<script>
+  // 初始化 Coze WebSDK
+  (function () {
+    function initCozeSDK() {
+      if (typeof cozeWebSDK === 'undefined') {
+        setTimeout(initCozeSDK, 100);
+        return;
+      }
+      cozeWebSDK.init({
+        projectId: '7678257485416824882',
+        refreshToken: function () {
+          return Promise.resolve("pat_OE81tk8MLXUdZp3e0RtOUCUTR1G47DW8F1noNYsnTD1UajhWofb6qo5i8yf5p4VU");
+        },
+        container: document.getElementById('coze-web-sdk-container'),
+        theme: 'light',
+        style: { width: '100%', height: '600px', borderRadius: '8px' }
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCozeSDK);
+    } else {
+      initCozeSDK();
+    }
+  })();
+</script>
 <script>
   // 页内片段导航：拦截点击，确保始终在当前文档内
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
